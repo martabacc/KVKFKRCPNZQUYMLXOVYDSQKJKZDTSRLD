@@ -1,24 +1,9 @@
 import crypto from 'crypto';
-import { authenticator } from 'otplib';
 import ErrorConstant from "../constants/ErrorConstant.mjs";
-import AppConstant from "../constants/AppConstant.mjs";
 
 export default class CryptoTool {
 	static TOTP_BYTE_LENGTH = 16;
 	static CSRF_LENGTH = 16;
-	static ALGO = 'aes-256-gcm';
-	static ENCODING = 'base64';
-	static OUTPUT_ENCODING = 'utf8';
-
-	constructor() {
-		this.authenticator = Object.create(authenticator)
-		this.authenticator.options = {
-			step: AppConstant.CSRF_CACHE_EXPIRY_IN_SEC, // Set the time step to 120 seconds (2 minutes)
-			digits: 6,
-			algorithm: 'sha1',
-			window: 1, // Check the current step and one step before and after
-		};
-	}
 
 	static generateSecretTOTP() {
 		return crypto.randomBytes(CryptoTool.TOTP_BYTE_LENGTH).toString('hex');
@@ -63,12 +48,4 @@ export default class CryptoTool {
 			throw error;
 		}
 	};
-
-	validate = ({ token, secret }) => {
-		return this.authenticator.verify({ token, secret });
-	}
-
-	create = ({ secret }) => {
-		return this.authenticator.generate(secret);
-	}
 }

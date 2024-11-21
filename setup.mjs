@@ -6,6 +6,7 @@ import CryptoTool from "./tools/CryptoTool.mjs";
 import PaymentService from "./services/PaymentService.mjs";
 import AppConstant from "./constants/AppConstant.mjs";
 import MockTOTPSecretRepository from "./repositories/MockTOTPSecretRepository.mjs";
+import AuthenticatorTool from "./tools/AuthenticatorTool.mjs";
 
 export default () => {
 	/* repositories */
@@ -15,12 +16,13 @@ export default () => {
 
 	/* tools */
 	const cryptoTool = new CryptoTool()
+	const authenticatorTool = new AuthenticatorTool()
 
 	/* services */
 	// const qrService = new QRService();
 	const csrfCacheService = new CsrfCacheService({ repository: csrfCacheRepository });
 	const totpService = new TOTPService({
-		repository: totpSecretRepository, cryptoTool
+		totpSecretRepository, authenticatorTool
 	});
 	const paymentService = new PaymentService({
 		csrfCacheService, totpService
