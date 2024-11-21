@@ -47,4 +47,8 @@ export default {
 		title: "Oops, kesalahan terjadi",
 		subtitle: "Silahkan coba kembali nanti, ya."
 	},
+	GENERAL_ERROR_NOT_FOUND: {
+		title: "Oops, kesalahan terjadi",
+		subtitle: "Halaman yang kamu cari tidak ada."
+	},
 }

@@ -11,6 +11,8 @@ export default class BaseResponse {
 		WRONG_PIN_OFFLINE_PAYMENT: 401,
 		INVALID_OFFLINE_PAYMENT_TOKEN: 400,
 		API_KEY_INVALID: 400,
+		MAXIMUM_PIN_ATTEMPT_REACHED: 403,
+		GENERAL_ERROR_NOT_FOUND: 404,
 	}
 
 	static createOkResponse(data) {

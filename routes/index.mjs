@@ -1,5 +1,6 @@
 import express from "express";
 import setup from "../setup.mjs";
+import AppService from "../services/AppService.mjs";
 
 const router = express.Router();
 
@@ -20,6 +21,12 @@ router.post('/payment/offline/authorize', (request, response) => {
 });
 
 /* debug */
+
+// Basic health check route
+router.get('dev/healthcheck', (req, res) => {
+	return res.status(200).json(AppService.stat());
+})
+
 router.get('/dev/csrf', (_, response) => {
 	return response.status(200).json(csrfCacheService.getAll());
 });
