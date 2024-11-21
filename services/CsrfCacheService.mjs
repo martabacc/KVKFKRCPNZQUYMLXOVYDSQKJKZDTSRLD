@@ -6,10 +6,10 @@ export default class CsrfCacheService {
 		this.repository = repository
 	}
 
-	create = ({ userId, amount }) => {
+	create = ({ amount }) => {
 		const t = CryptoTool.generateCSRFToken()
 
-		const { error } = this.repository.set(t, { amt: amount })
+		const { error } = this.repository.set(t, { amt: amount, attempt: 0 })
 		if (!!error) {
 			return { error: ErrorConstant.CSRF_CACHE_LIMIT_REACHED }
 		}
@@ -18,6 +18,14 @@ export default class CsrfCacheService {
 
 	get = ({ token }) => {
 		return this.repository.get(token)
+	}
+
+	incrementPINAttempt = ({ token }) => {
+		const before = this.get({ token });
+		const after = { ...before, attempt: before.attempt + 1 };
+		this.repository.set(token, after)
+
+		return after
 	}
 
 	delete = ({ token }) => this.repository.delete(token)

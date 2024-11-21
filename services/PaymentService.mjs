@@ -2,6 +2,7 @@ import PaymentValidator from "../validator/PaymentValidator.mjs";
 import ErrorConstant from "../constants/ErrorConstant.mjs";
 import QRService from "./QRService.mjs";
 import BaseResponse from "../contracts/BaseResponse.mjs";
+import AppConstant from "../constants/AppConstant.mjs";
 
 export default class PaymentService {
 	constructor({ csrfCacheService, totpService, paidCsrfCacheRepository }) {
@@ -49,7 +50,12 @@ export default class PaymentService {
 			return this._handleError(ErrorConstant.INVALID_OFFLINE_PAYMENT_TOKEN)
 		}
 
-		const { amt: amount } = cachedCsrf;
+		const { amt: amount, attempt } = cachedCsrf;
+
+		/* pin rate limiter */
+		if (attempt >= AppConstant.PIN_VALIDATION_MAX_ATTEMPTS) {
+			return this._handleError(ErrorConstant.MAXIMUM_PIN_ATTEMPT_REACHED)
+		}
 
 		/* simulate balance check */
 		error = PaymentValidator.validateAmount({ amount });
@@ -60,6 +66,8 @@ export default class PaymentService {
 		/* simulate pin check calls */
 		error = PaymentValidator.validateAuthorization({ pin });
 		if (!!error) {
+			this.csrfCacheService.incrementPINAttempt({ token });
+
 			return this._handleError(error)
 		}
 
