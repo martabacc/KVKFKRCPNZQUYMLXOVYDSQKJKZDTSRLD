@@ -53,6 +53,7 @@ export default class PaymentService {
 			return this._handleError(error)
 		}
 
+		this.csrfCacheService.delete({ token })
 		return BaseResponse.createOkResponse()
 	};
 

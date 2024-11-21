@@ -26,5 +26,5 @@ export default () => {
 		csrfCacheService, totpService
 	})
 
-	return { paymentService }
+	return { paymentService, totpService, csrfCacheService }
 }

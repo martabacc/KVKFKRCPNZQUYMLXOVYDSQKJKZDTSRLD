@@ -3,7 +3,7 @@ import setup from "../setup.mjs";
 
 const router = express.Router();
 
-const { paymentService } = setup();
+const { paymentService, csrfCacheService } = setup();
 
 /*customer*/
 router.post('/payment/totp/generate', () => 'hello world');
@@ -19,4 +19,10 @@ router.post('/payment/offline/authorize', (request, response) => {
 	return response.status(result.statusCode).json(result);
 });
 
-export default router;ø
+/* debug */
+router.get('/dev/csrf', (_, response) => {
+	const result = csrfCacheService.getAll();
+	return response.status(result.statusCode).json(result);
+});
+
+export default router;

@@ -13,4 +13,12 @@ export default class CsrfCacheRepository {
 	get = (key) => {
 		return this.cache.get(key);
 	};
+
+	delete = (key) => {
+		return this.cache.del(key);
+	};
+
+	getAll = () => {
+		return this.cache.getStats();
+	};
 }

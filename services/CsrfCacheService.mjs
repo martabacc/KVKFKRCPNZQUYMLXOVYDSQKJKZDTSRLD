@@ -15,6 +15,14 @@ export default class CsrfCacheService {
 	get = ({ token }) => {
 		this.repository.get(token)
 	}
+
+	delete = ({ token }) => this.repository.delete(token)
+
+	getAll = () => {
+		return this.repository.getAll()
+	}
+
+
 }
 
 
