@@ -1,6 +1,7 @@
 import PaymentValidator from "../validator/PaymentValidator.mjs";
 import ErrorConstant from "../constants/ErrorConstant.mjs";
 import QRService from "./QRService.mjs";
+import BaseResponse from "../contracts/BaseResponse.mjs";
 
 export default class PaymentService {
 	constructor({ csrfCacheService, totpService }) {
@@ -27,8 +28,11 @@ export default class PaymentService {
 			return this._handleError(decrypted.error)
 		}
 
-		const csrfToken = this.csrfCacheService.create({ userId, amount });
-		return BaseResponse.createOkResponse({ token: csrfToken });
+		const { token, error: csrfError } = this.csrfCacheService.create({ userId, amount });
+		if (!!csrfError) {
+			return this._handleError(error)
+		}
+		return BaseResponse.createOkResponse({ token });
 	};
 
 	authorize = ({ token, pin }) => {

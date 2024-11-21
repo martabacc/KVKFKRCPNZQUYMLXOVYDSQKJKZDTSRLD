@@ -3,7 +3,7 @@ import AppConstant from "../constants/AppConstant.mjs";
 
 export default class QRService {
 	static decryptAndParse = ({ data }) => {
-		return CryptoTool.decryptData(data, AppConstant.SECRET_KEY_ENCRYPTION);
+		return CryptoTool.decrypt(data, AppConstant.SECRET_KEY_ENCRYPTION);
 	};
 }
 

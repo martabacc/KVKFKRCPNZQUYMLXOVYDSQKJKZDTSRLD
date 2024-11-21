@@ -1,5 +1,6 @@
 import NodeCache from "node-cache"
 import AppConstant from "../constants/AppConstant.mjs";
+import ErrorConstant from "../constants/ErrorConstant.mjs";
 
 export default class CsrfCacheRepository {
 	constructor() {
@@ -7,7 +8,12 @@ export default class CsrfCacheRepository {
 	}
 
 	set = (key, value) => {
+		if (this.cache.getStats().ksize >= AppConstant.LIMIT_STORED_CSRF) {
+			return { error: ErrorConstant.CSRF_CACHE_LIMIT_REACHED }
+		}
+
 		this.cache.set(key, value, AppConstant.CSRF_CACHE_EXPIRY_IN_SEC);
+		return {}
 	};
 
 	get = (key) => {
@@ -18,7 +24,23 @@ export default class CsrfCacheRepository {
 		return this.cache.del(key);
 	};
 
-	getAll = () => {
+	deleteAll = () => {
+		return this.cache.flushAll();
+	};
+
+	stat = () => {
 		return this.cache.getStats();
 	};
+
+	getAll = () => {
+		this.cache.keys().map((key) => {
+			const value = this.cache.get(key);
+			const ttl = this.cache.getTtl(key);
+			const ttlHuman = ttl ? Math.round((ttl - Date.now()) / 1000) + ' seconds' : 'No TTL';
+
+			return {
+				key, value, ttl: ttlHuman,
+			};
+		});
+	}
 }

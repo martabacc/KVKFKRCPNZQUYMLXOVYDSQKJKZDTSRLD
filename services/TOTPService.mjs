@@ -1,4 +1,8 @@
 import ErrorConstant from "../constants/ErrorConstant.mjs";
+import AppConstant from "../constants/AppConstant.mjs";
+import { authenticator } from "otplib";
+import CryptoTool from "../tools/CryptoTool.mjs";
+import BaseResponse from "../contracts/BaseResponse.mjs"
 
 export default class TOTPService {
 	constructor({ repository, cryptoTool }) {
@@ -16,6 +20,17 @@ export default class TOTPService {
 		if (!isValid) {
 			return ErrorConstant.OFFLINE_PAYMENT_INIT_INVALID_QR
 		}
+	}
+
+	generateMockTOTPForUser({ userId }) {
+		const totpSecret = this.repository.get(userId);
+		const payloadSecret = AppConstant.SECRET_KEY_ENCRYPTION
+
+		const rawPayload = JSON.stringify({ userId });
+		const encrypted = CryptoTool.encrypt(rawPayload, payloadSecret);
+
+		const otp = authenticator.generate(totpSecret);
+		return BaseResponse.createOkResponse({ data: encrypted, otp })
 	}
 }
 

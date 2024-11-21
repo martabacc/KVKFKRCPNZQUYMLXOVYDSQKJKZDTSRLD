@@ -24,43 +24,47 @@ export default class CryptoTool {
 		return crypto.randomBytes(CryptoTool.CSRF_LENGTH).toString('hex');
 	}
 
-	static decryptData(encryptedData, secretKey) {
+	static encrypt = (payload, secretKey) => {
 		try {
-			if (!encryptedData || typeof encryptedData !== 'string') {
-				throw new Error('Invalid input: Encrypted data must be a string.');
-			}
 
-			// Split the encrypted data and authentication tag
-			const [ciphertext, authTag] = encryptedData.split('.');
+			const iv = crypto.randomBytes(12); // 12-byte IV for AES-GCM
+			const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(secretKey, 'utf8'), iv);
 
-			if (!ciphertext || !authTag) {
-				throw new Error('Invalid encrypted data format: Missing ciphertext or authentication tag.');
-			}
+			const encrypted = Buffer.concat([cipher.update(payload, 'utf8'), cipher.final()]);
+			const authTag = cipher.getAuthTag(); // Authentication tag for integrity
 
-			// Create a decipher instance
-			const decipher = crypto.createDecipheriv(CryptoTool.ALGO, secretKey,
-				Buffer.alloc(12, 0));
-
-			// Set the authentication tag to verify integrity
-			decipher.setAuthTag(Buffer.from(authTag, CryptoTool.ENCODING));
-
-			// Decrypt the data
-			let decrypted = decipher.update(ciphertext, CryptoTool.ENCODING, CryptoTool.OUTPUT_ENCODING);
-			decrypted += decipher.final(CryptoTool.OUTPUT_ENCODING);
-
-			// Return the parsed JSON object
-			return JSON.parse(decrypted);
-		} catch (error) {
+			// Combine IV, auth tag, and encrypted data into a single string
+			return Buffer.concat([iv, authTag, encrypted]).toString('base64');
+		} catch (_) {
 			return { error: ErrorConstant.OFFLINE_PAYMENT_INIT_INVALID_QR };
 		}
-	}
+	};
+
+	static decrypt = (encryptedString, secretKey) => {
+		try {
+			// Decode the encrypted string (base64) and extract IV, auth tag, and encrypted data
+			const data = Buffer.from(encryptedString, 'base64');
+			const iv = data.slice(0, 12); // First 12 bytes are the IV
+			const authTag = data.slice(12, 28); // Next 16 bytes are the auth tag
+			const encryptedData = data.slice(28); // Rest is the encrypted payload
+
+			const decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(secretKey, 'utf8'), iv);
+			decipher.setAuthTag(authTag); // Set the authentication tag
+
+			const decrypted = Buffer.concat([decipher.update(encryptedData), decipher.final()]);
+
+			return JSON.parse(decrypted.toString('utf8'))
+		} catch (error) {
+			console.error('Decryption error:', error.message);
+			throw error;
+		}
+	};
 
 	validateOTP = ({ token, secret }) => {
 		try {
-			const isValid = authenticator.verify({ token, secret });
-
-			return isValid
-		} catch (_) {
+			return authenticator.verify({ token: JSON.stringify(token), secret })
+		} catch (error) {
+			console.log(error)
 			return false
 		}
 	}

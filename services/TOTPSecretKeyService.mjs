@@ -1,5 +1,6 @@
 import ErrorConstants from '../constants/ErrorConstant.mjs';
 import TOTPSecretKey from '../models/TOTPSecretKey.mjs';
+import BaseResponse from "../contracts/BaseResponse.mjs";
 
 export default class TOTPSecretKeyService {
 	constructor({ repository }) {

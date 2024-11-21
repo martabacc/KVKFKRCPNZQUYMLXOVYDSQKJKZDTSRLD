@@ -21,7 +21,7 @@ describe('CryptoTool', () => {
 			const authTag = cipher.getAuthTag().toString(CryptoTool.ENCODING);
 			const encryptedData = `${encrypted}.${authTag}`;
 
-			const decryptedData = CryptoTool.decryptData(encryptedData, secretKey);
+			const decryptedData = CryptoTool.decrypt(encryptedData, secretKey);
 			expect(decryptedData).to.deep.equal(data);
 		});
 
@@ -34,7 +34,7 @@ describe('CryptoTool', () => {
 			const authTag = crypto.randomBytes(16).toString(CryptoTool.ENCODING); // Incorrect auth tag
 			const encryptedData = `${encrypted}.${authTag}`;
 
-			expect(() => CryptoTool.decryptData(encryptedData, secretKey)).to.throw();
+			expect(() => CryptoTool.decrypt(encryptedData, secretKey)).to.throw();
 		});
 	});
 });

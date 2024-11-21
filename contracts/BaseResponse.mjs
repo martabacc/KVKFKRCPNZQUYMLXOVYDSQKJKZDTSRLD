@@ -1,4 +1,4 @@
-class BaseResponse {
+export default class BaseResponse {
 	static errorMap = {
 		INVALID_GENERATE_ALREADY_REGISTERED: 403,
 		INVALID_NOT_REGISTERED: 403,

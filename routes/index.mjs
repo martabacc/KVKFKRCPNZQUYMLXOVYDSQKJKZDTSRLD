@@ -3,7 +3,7 @@ import setup from "../setup.mjs";
 
 const router = express.Router();
 
-const { paymentService, csrfCacheService } = setup();
+const { paymentService, csrfCacheService, totpService } = setup();
 
 /*customer*/
 router.post('/payment/totp/generate', () => 'hello world');
@@ -22,6 +22,14 @@ router.post('/payment/offline/authorize', (request, response) => {
 /* debug */
 router.get('/dev/csrf', (_, response) => {
 	const result = csrfCacheService.getAll();
+	return response.status(result.statusCode).json(result);
+});
+router.post('/mock/qr', (request, response) => {
+	const result = totpService.generateMockTOTPForUser(request.body);
+	return response.status(result.statusCode).json(result);
+});
+router.post('/csrf/flush', (_, response) => {
+	const result = csrfCacheService.deleteAll();
 	return response.status(result.statusCode).json(result);
 });
 
