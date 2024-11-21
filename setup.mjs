@@ -10,7 +10,7 @@ import AuthenticatorTool from "./tools/AuthenticatorTool.mjs";
 export default () => {
 	/* repositories */
 	const csrfCacheRepository = new CsrfCacheRepository();
-	const totpSecretRepository = AppConstant.isDynamicTOTPSecretKey ? new TOTPSecretRepository()
+	const totpSecretRepository = AppConstant.DYNAMIC_SECRET_OTP_ENABLED ? new TOTPSecretRepository()
 		: new MockTOTPSecretRepository();
 
 	/* tools */

@@ -1,3 +1,5 @@
+import locale from '../localization/index.mjs';
+
 export default class BaseResponse {
 	static errorMap = {
 		INVALID_GENERATE_ALREADY_REGISTERED: 403,
@@ -22,7 +24,13 @@ export default class BaseResponse {
 	static createErrorResponse(code) {
 		return {
 			success: false,
-			code,
+			errors: [{ entity: 'qr', message: 'Error', error_code: 400101 }],
+			action: {
+				value: 'error',
+				code,
+				type: 'SHOW_ERROR_DIALOG',
+				...locale.append(code)
+			},
 			statusCode: BaseResponse.getErrorStatusCode(code)
 		};
 	}
