@@ -2,6 +2,7 @@ import PaymentValidator from "../validator/PaymentValidator.mjs";
 import ErrorConstant from "../constants/ErrorConstant.mjs";
 import QRService from "./QRService.mjs";
 import BaseResponse from "../contracts/BaseResponse.mjs";
+import _ from "lodash"
 
 export default class PaymentService {
 	constructor({ csrfCacheService, totpService }) {
@@ -39,11 +40,11 @@ export default class PaymentService {
 		let error;
 
 		const cachedCsrf = this.csrfCacheService.get({ token })
-		if (!cachedCsrf) {
+		if (_.isNil(cachedCsrf)) {
 			return this._handleError(ErrorConstant.INVALID_OFFLINE_PAYMENT_TOKEN)
 		}
 
-		const { amt: amount, userId } = cachedCsrf;
+		const { amt: amount } = cachedCsrf;
 
 		/* simulate balance check */
 		error = PaymentValidator.validateAmount({ amount });
