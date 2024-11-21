@@ -5,11 +5,11 @@ export default class CsrfService {
 		this.repository = repository
 	}
 
-	create = ({ userId, otp }) => {
-		const csrfToken = CryptoTool.generateCSRFToken()
+	create = ({ userId, amt }) => {
+		const t = CryptoTool.generateCSRFToken()
 
-		this.repository.set(userId, csrfToken)
-		return csrfToken;
+		this.repository.set(userId, { t, amt })
+		return t;
 	}
 }
 
