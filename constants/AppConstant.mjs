@@ -7,4 +7,5 @@ export default {
     TRIGGER_PAYMENT_ALREADY_PAID: Number(process.env.TRIGGER_PAYMENT_ALREADY_PAID),
     CSRF_CACHE_EXPIRY_IN_SEC: Number(process.env.CSRF_CACHE_EXPIRY_IN_SEC),
     DEFAULT_PIN: Number(process.env.DEFAULT_PIN),
+    isDynamicTOTPSecretKey: Boolean(process.env.USING_DYNAMIC_SECRET_KEY_TOTP),
 }
