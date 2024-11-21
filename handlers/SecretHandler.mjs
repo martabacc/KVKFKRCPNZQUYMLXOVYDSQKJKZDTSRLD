@@ -1,5 +1,5 @@
 import ErrorConstants from '../constants/ErrorConstant';
-import Secret from '../models/Secret';
+import TOTPSecretKey from '../models/Secret';
 
 export default class SecretHandler {
     constructor(secretRepository) {
@@ -7,7 +7,7 @@ export default class SecretHandler {
     }
 
     generateSecret({ userId, deviceId }) {
-        const value = Secret.create({ deviceId });
+        const value = TOTPSecretKey.create({ deviceId });
 
         if (!this.secretRepository.set(userId, value)) {
             return BaseResponse.createErrorResponse(
