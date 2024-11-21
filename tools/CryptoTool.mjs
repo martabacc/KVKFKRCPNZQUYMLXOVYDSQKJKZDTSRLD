@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { authenticator } from 'otplib';
 import ErrorConstant from "../constants/ErrorConstant.mjs";
 
 export default class CryptoTool {
@@ -7,6 +8,13 @@ export default class CryptoTool {
 	static ALGO = 'aes-256-gcm';
 	static ENCODING = 'base64';
 	static OUTPUT_ENCODING = 'utf8';
+
+	constructor() {
+		authenticator.options = {
+			step: 120, // Set the time step to 120 seconds (2 minutes)
+			window: 1, // Only allow 1 valid OTP per 120 seconds window
+		};
+	}
 
 	static generateSecretTOTP() {
 		return crypto.randomBytes(CryptoTool.TOTP_BYTE_LENGTH).toString('hex');
@@ -45,6 +53,16 @@ export default class CryptoTool {
 		} catch (error) {
 			error.code = ErrorConstant.OFFLINE_PAYMENT_INIT_INVALID_QR
 			throw error;
+		}
+	}
+
+	validateOTP = ({ token, secret }) => {
+		try {
+			const isValid = authenticator.verify({ token, secret });
+
+			return isValid
+		} catch (_) {
+			return false
 		}
 	}
 }
