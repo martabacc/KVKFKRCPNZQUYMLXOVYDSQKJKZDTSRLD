@@ -39,6 +39,10 @@ export default {
 		title: "PIN Salah",
 		subtitle: "Periksa kembali PIN kamu."
 	},
+	INVALID_RECYCLED_TOTP: {
+		title: "OTP ini tidak valid",
+		subtitle: "OTP ini sudah digunakan baru-baru ini. Untuk keamanan, gunakan OTP yang baru."
+	},
 	MAXIMUM_PIN_ATTEMPT_REACHED: {
 		title: "Percobaan PIN dibatasi",
 		subtitle: "Percobaan PIN salah telah mencapai batas maksimal. Silakan coba kembali nanti."

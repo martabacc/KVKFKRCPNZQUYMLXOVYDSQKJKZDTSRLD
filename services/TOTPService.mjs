@@ -4,12 +4,18 @@ import CryptoTool from "../tools/CryptoTool.mjs";
 import BaseResponse from "../contracts/BaseResponse.mjs"
 
 export default class TOTPService {
-	constructor({ totpSecretRepository, authenticatorTool }) {
+	constructor({ totpSecretRepository, authenticatorTool, totpUsageRepository }) {
 		this.totpSecretRepository = totpSecretRepository
 		this.authenticatorTool = authenticatorTool
+		this.totpUsageRepository = totpUsageRepository
 	}
 
 	validateTOTP = ({ userId, otp }) => {
+		const isUsed = !!this.totpUsageRepository.get(`${userId}-${otp}`);
+		if (isUsed) {
+			return ErrorConstant.INVALID_RECYCLED_TOTP
+		}
+
 		const secret = this.totpSecretRepository.get(userId);
 		if (!secret) {
 			return ErrorConstant.OFFLINE_PAYMENT_NOT_CONFIGURED
@@ -19,6 +25,9 @@ export default class TOTPService {
 		if (!isValid) {
 			return ErrorConstant.OFFLINE_PAYMENT_INIT_INVALID_QR
 		}
+
+		/* valid, set otp to used to avoid recycling */
+		this.totpUsageRepository.set(`${userId}-${otp}`, 1)
 	}
 
 	generateMockTOTPForUser({ userId }) {

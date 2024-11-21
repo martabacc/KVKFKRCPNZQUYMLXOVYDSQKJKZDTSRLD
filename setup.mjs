@@ -11,6 +11,8 @@ export default () => {
 	/* repositories */
 	const csrfCacheRepository = new InMemoryCacheRepository();
 	const paidCsrfCacheRepository = new InMemoryCacheRepository();
+	const totpUsageRepository = new InMemoryCacheRepository();
+
 	const totpSecretRepository = AppConstant.DYNAMIC_SECRET_OTP_ENABLED ? new TOTPSecretRepository()
 		: new MockTOTPSecretRepository();
 
@@ -21,7 +23,7 @@ export default () => {
 	// const qrService = new QRService();
 	const csrfCacheService = new CsrfCacheService({ repository: csrfCacheRepository });
 	const totpService = new TOTPService({
-		totpSecretRepository, authenticatorTool
+		totpSecretRepository, authenticatorTool, totpUsageRepository
 	});
 	const paymentService = new PaymentService({
 		csrfCacheService, totpService, paidCsrfCacheRepository

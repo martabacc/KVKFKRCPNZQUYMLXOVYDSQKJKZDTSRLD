@@ -27,7 +27,7 @@ export default class PaymentService {
 
 		error = this.totpService.validateTOTP({ userId, otp });
 		if (!!error) {
-			return this._handleError(decrypted.error)
+			return this._handleError(error)
 		}
 
 		const { token, error: csrfError } = this.csrfCacheService.create({ userId, amount });
