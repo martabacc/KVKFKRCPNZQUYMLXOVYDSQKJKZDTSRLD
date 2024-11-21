@@ -2,12 +2,12 @@ import PaymentValidator from "../validator/PaymentValidator.mjs";
 import ErrorConstant from "../constants/ErrorConstant.mjs";
 import QRService from "./QRService.mjs";
 import BaseResponse from "../contracts/BaseResponse.mjs";
-import _ from "lodash"
 
 export default class PaymentService {
-	constructor({ csrfCacheService, totpService }) {
+	constructor({ csrfCacheService, totpService, paidCsrfCacheRepository }) {
 		this.csrfCacheService = csrfCacheService
 		this.totpService = totpService
+		this.paidCsrfCacheRepository = paidCsrfCacheRepository
 	}
 
 	initiate = ({ data, otp, amount }) => {
@@ -39,8 +39,13 @@ export default class PaymentService {
 	authorize = ({ token, pin }) => {
 		let error;
 
+		const hasPaid = !!this.paidCsrfCacheRepository.get(token)
+		if (hasPaid) {
+			return this._handleError(ErrorConstant.INVALID_PAYMENT_ALREADY_PAID)
+		}
+
 		const cachedCsrf = this.csrfCacheService.get({ token })
-		if (_.isNil(cachedCsrf)) {
+		if (!cachedCsrf) {
 			return this._handleError(ErrorConstant.INVALID_OFFLINE_PAYMENT_TOKEN)
 		}
 
@@ -59,7 +64,8 @@ export default class PaymentService {
 		}
 
 		this.csrfCacheService.delete({ token })
-		return BaseResponse.createOkResponse()
+		this.paidCsrfCacheRepository.set(token, 1)
+		return BaseResponse.createOkResponse({ status: "PAID", amount })
 	};
 
 	_handleError = (errorCode) => BaseResponse.createErrorResponse(errorCode)

@@ -2,7 +2,7 @@ import NodeCache from "node-cache"
 import AppConstant from "../constants/AppConstant.mjs";
 import ErrorConstant from "../constants/ErrorConstant.mjs";
 
-export default class CsrfCacheRepository {
+export default class InMemoryCacheRepository {
 	constructor() {
 		this.cache = new NodeCache();
 	}

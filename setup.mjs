@@ -1,4 +1,4 @@
-import CsrfCacheRepository from "./repositories/CsrfCacheRepository.mjs";
+import InMemoryCacheRepository from "./repositories/InMemoryCacheRepository.mjs";
 import TOTPSecretRepository from "./repositories/TOTPSecretRepository.mjs";
 import CsrfCacheService from "./services/CsrfCacheService.mjs";
 import TOTPService from "./services/TOTPService.mjs";
@@ -9,7 +9,8 @@ import AuthenticatorTool from "./tools/AuthenticatorTool.mjs";
 
 export default () => {
 	/* repositories */
-	const csrfCacheRepository = new CsrfCacheRepository();
+	const csrfCacheRepository = new InMemoryCacheRepository();
+	const paidCsrfCacheRepository = new InMemoryCacheRepository();
 	const totpSecretRepository = AppConstant.DYNAMIC_SECRET_OTP_ENABLED ? new TOTPSecretRepository()
 		: new MockTOTPSecretRepository();
 
@@ -23,7 +24,7 @@ export default () => {
 		totpSecretRepository, authenticatorTool
 	});
 	const paymentService = new PaymentService({
-		csrfCacheService, totpService
+		csrfCacheService, totpService, paidCsrfCacheRepository
 	})
 
 	return { paymentService, totpService, csrfCacheService }
