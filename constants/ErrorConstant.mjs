@@ -1,0 +1,6 @@
+const ErrorConstant = Object.freeze({
+    INVALID_GENERATE_ALREADY_REGISTERED: "INVALID_GENERATE_ALREADY_REGISTERED",
+    INVALID_NOT_REGISTERED: "INVALID_NOT_REGISTERED"
+});
+
+module.exports = ErrorConstant;
