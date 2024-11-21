@@ -1,13 +1,19 @@
 import crypto from 'crypto';
+import ErrorConstant from "../constants/ErrorConstant.mjs";
 
 export default class CryptoTool {
-	static LENGTH = 16;
+	static TOTP_BYTE_LENGTH = 16;
+	static CSRF_LENGTH = 16;
 	static ALGO = 'aes-256-gcm';
 	static ENCODING = 'base64';
 	static OUTPUT_ENCODING = 'utf8';
 
 	static generateSecretTOTP() {
-		return crypto.randomBytes(CryptoTool.LENGTH).toString('hex');
+		return crypto.randomBytes(CryptoTool.TOTP_BYTE_LENGTH).toString('hex');
+	}
+
+	static generateCSRFToken() {
+		return crypto.randomBytes(CryptoTool.CSRF_LENGTH).toString('hex');
 	}
 
 	static decryptData(encryptedData, secretKey) {
@@ -37,9 +43,8 @@ export default class CryptoTool {
 			// Return the parsed JSON object
 			return JSON.parse(decrypted);
 		} catch (error) {
-			console.error('Decryption failed:', error.message);
-			throw new Error(
-				'Decryption failed due to internal error or invalid data.');
+			error.code = ErrorConstant.OFFLINE_PAYMENT_INIT_INVALID_QR
+			throw error;
 		}
 	}
 }
