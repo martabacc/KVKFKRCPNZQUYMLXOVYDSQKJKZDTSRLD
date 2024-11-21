@@ -51,8 +51,7 @@ export default class CryptoTool {
 			// Return the parsed JSON object
 			return JSON.parse(decrypted);
 		} catch (error) {
-			error.code = ErrorConstant.OFFLINE_PAYMENT_INIT_INVALID_QR
-			throw error;
+			return { error: ErrorConstant.OFFLINE_PAYMENT_INIT_INVALID_QR };
 		}
 	}
 

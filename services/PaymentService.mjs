@@ -3,52 +3,33 @@ import AppConstant from "../constants/AppConstant.mjs";
 import ErrorConstant from "../constants/ErrorConstant.mjs";
 
 export default class PaymentService {
-	constructor(csrfCacheRepository, totpSecretRepository, cryptoTool) {
+	constructor({ csrfCacheRepository, qrService, totpService }) {
 		this.csrfCacheRepository = csrfCacheRepository
-		this.totpSecretRepository = totpSecretRepository
-		this.cryptoTool = cryptoTool
+		this.qrService = qrService
+		this.totpService = totpService
 	}
 
 	initiate = ({ data, otp, amount, signature }) => {
-		/* validate encryption */
-		var decryptedData, error;
-		try {
-			decryptedData = CryptoTool.decryptData(data, AppConstant.SECRET_KEY_ENCRYPTION);
-		} catch (e) {
-			return BaseResponse.createErrorResponse(e.code)
+		var error;
+		const decrypted = this.qrService.decryptAndParse({ data });
+		if (decrypted.error) {
+			return this._handleError(decrypted.error);
 		}
-		const { userId } = decryptedData;
+		const { userId } = decrypted;
 
 		/* validate totp */
+		error = this.validatePayment({ userId, amount });
+		this._handleError(error);
 
-		error = this.validatePayment({ userId, amount: decryptedData.amount });
-		if (!!error) {
-			return BaseResponse.createErrorResponse(error)
-		}
-
-		error = this.validateTOTP({ userId, otp });
-		if (!!error) {
-			return BaseResponse.createErrorResponse(error)
-		}
+		error = this.totpService.validateTOTP({ userId, otp });
+		this._handleError(error);
 
 		const csrfToken = CryptoTool.generateCSRFToken()
-		this.totpSecretRepository.set(userId, csrfToken)
+		this.csrfCacheRepository.set(userId, csrfToken)
 		return BaseResponse.createOkResponse({
 			token: csrfToken
 		});
 	};
-
-	validateTOTP = ({ userId, otp }) => {
-		const secret = this.totpSecretRepository.get(userId);
-		if (!secret) {
-			return ErrorConstant.OFFLINE_PAYMENT_NOT_CONFIGURED
-		}
-
-		const isValid = this.cryptoTool.validateOTP({ token: otp, secret });
-		if (!isValid) {
-			return ErrorConstant.OFFLINE_PAYMENT_INIT_INVALID_QR
-		}
-	}
 
 	validatePayment = ({ amount }) => {
 		if (amount > AppConstant.TRIGGER_INSUFFICIENT_BALANCE_AMOUNT) {
@@ -59,6 +40,12 @@ export default class PaymentService {
 		}
 		if (amount === AppConstant.TRIGGER_PAYMENT_ALREADY_PAID) {
 			return ErrorConstant.INVALID_PAYMENT_INSUFFICIENT_BALANCE
+		}
+	}
+
+	_handleError(errorCode) {
+		if (!!errorCode) {
+			return BaseResponse.createErrorResponse(errorCode)
 		}
 	}
 }
