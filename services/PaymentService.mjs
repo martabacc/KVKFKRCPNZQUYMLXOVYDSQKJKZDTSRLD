@@ -1,16 +1,16 @@
 import PaymentValidator from "../validator/PaymentValidator.mjs";
 import ErrorConstant from "../constants/ErrorConstant.mjs";
+import QRService from "./QRService.mjs";
 
 export default class PaymentService {
-	constructor({ csrfCacheService, qrService, totpService }) {
+	constructor({ csrfCacheService, totpService }) {
 		this.csrfCacheService = csrfCacheService
-		this.qrService = qrService
 		this.totpService = totpService
 	}
 
 	initiate = ({ data, otp, amount }) => {
 		let error;
-		const decrypted = this.qrService.decryptAndParse({ data });
+		const decrypted = QRService.decryptAndParse({ data });
 		if (!!decrypted.error) {
 			return this._handleError(decrypted.error)
 		}

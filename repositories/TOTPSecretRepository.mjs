@@ -1,4 +1,4 @@
-export default class SecretRepository {
+export default class TOTPSecretRepository {
     db = {};
 
     set = (key, value) => {

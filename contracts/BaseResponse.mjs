@@ -1,16 +1,33 @@
 class BaseResponse {
-    static createOkResponse(data) {
-        return {
-            success: true,
-            data
-        };
-    }
+	static errorMap = {
+		INVALID_GENERATE_ALREADY_REGISTERED: 403,
+		INVALID_NOT_REGISTERED: 403,
+		OFFLINE_PAYMENT_INIT_INVALID_QR: 403,
+		INVALID_PAYMENT_INSUFFICIENT_BALANCE: 403,
+		INVALID_PAYMENT_ALREADY_PAID: 403,
+		OFFLINE_PAYMENT_NOT_CONFIGURED: 400,
+		WRONG_PIN_OFFLINE_PAYMENT: 401,
+		INVALID_OFFLINE_PAYMENT_TOKEN: 400,
+	}
 
-    static createErrorResponse(code, message) {
-        return {
-            success: false,
-            code,
-            message
-        };
-    }
+	static createOkResponse(data) {
+		return {
+			success: true,
+			data,
+			statusCode: 200
+		};
+	}
+
+	static createErrorResponse(code, message) {
+		return {
+			success: false,
+			code,
+			message,
+			statusCode: BaseResponse.getErrorStatusCode(code)
+		};
+	}
+
+	static getErrorStatusCode(code) {
+		return BaseResponse.errorMap[code] || 500;
+	}
 }
