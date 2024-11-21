@@ -8,6 +8,7 @@ export default class BaseResponse {
 		OFFLINE_PAYMENT_NOT_CONFIGURED: 400,
 		WRONG_PIN_OFFLINE_PAYMENT: 401,
 		INVALID_OFFLINE_PAYMENT_TOKEN: 400,
+		API_KEY_INVALID: 400,
 	}
 
 	static createOkResponse(data) {
@@ -18,11 +19,10 @@ export default class BaseResponse {
 		};
 	}
 
-	static createErrorResponse(code, message) {
+	static createErrorResponse(code) {
 		return {
 			success: false,
 			code,
-			message,
 			statusCode: BaseResponse.getErrorStatusCode(code)
 		};
 	}

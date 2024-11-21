@@ -3,6 +3,7 @@ dotenv.config();
 
 export default {
     APP_PORT: process.env.SERVER_PORT,
+    API_KEY: process.env.SERVER_API_KEY,
     SECRET_KEY_SIGNATURE: process.env.SECRET_KEY_SIGNATURE,
     SECRET_KEY_ENCRYPTION: process.env.SECRET_KEY_ENCRYPTION,
     SECRET_KEY_TOTP: process.env.SECRET_KEY_TOTP,
