@@ -1,15 +1,14 @@
+import dotenv from 'dotenv';
 import createError from 'http-errors'
 import express from 'express'
-import path from 'path'
 import cookieParser from 'cookie-parser'
 import logger from 'morgan'
 import routes from './routes/index.mjs'
-import dotenv from 'dotenv';
 
 dotenv.config();
-const app = express();
-const port = process.env.PORT;
 
+const app = express();
+const port = process.env.SERVER_PORT;
 
 app.use(logger('dev'));
 app.use(express.json());
