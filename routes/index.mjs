@@ -21,16 +21,15 @@ router.post('/payment/offline/authorize', (request, response) => {
 
 /* debug */
 router.get('/dev/csrf', (_, response) => {
-	const result = csrfCacheService.getAll();
-	return response.status(result.statusCode).json(result);
+	return response.status(200).json(csrfCacheService.getAll());
 });
-router.post('/mock/qr', (request, response) => {
-	const result = totpService.generateMockTOTPForUser(request.body);
-	return response.status(result.statusCode).json(result);
+
+router.post('/dev/mock/qr', (request, response) => {
+	return response.status(200).json(totpService.generateMockTOTPForUser(request.body));
 });
-router.post('/csrf/flush', (_, response) => {
-	const result = csrfCacheService.deleteAll();
-	return response.status(result.statusCode).json(result);
+
+router.post('/dev/csrf/flush', (_, response) => {
+	return response.status(200).json(csrfCacheService.deleteAll());
 });
 
 export default router;

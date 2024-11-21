@@ -33,7 +33,7 @@ export default class CsrfCacheRepository {
 	};
 
 	getAll = () => {
-		this.cache.keys().map((key) => {
+		return this.cache.keys().map((key) => {
 			const value = this.cache.get(key);
 			const ttl = this.cache.getTtl(key);
 			const ttlHuman = ttl ? Math.round((ttl - Date.now()) / 1000) + ' seconds' : 'No TTL';

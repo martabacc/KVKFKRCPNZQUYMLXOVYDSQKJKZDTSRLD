@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { authenticator } from 'otplib';
 import ErrorConstant from "../constants/ErrorConstant.mjs";
+import AppConstant from "../constants/AppConstant.mjs";
 
 export default class CryptoTool {
 	static TOTP_BYTE_LENGTH = 16;
@@ -10,9 +11,12 @@ export default class CryptoTool {
 	static OUTPUT_ENCODING = 'utf8';
 
 	constructor() {
-		authenticator.options = {
-			step: 120, // Set the time step to 120 seconds (2 minutes)
-			window: 1, // Only allow 1 valid OTP per 120 seconds window
+		this.authenticator = Object.create(authenticator)
+		this.authenticator.options = {
+			step: AppConstant.CSRF_CACHE_EXPIRY_IN_SEC, // Set the time step to 120 seconds (2 minutes)
+			digits: 6,
+			algorithm: 'sha1',
+			window: 1, // Check the current step and one step before and after
 		};
 	}
 
@@ -60,12 +64,11 @@ export default class CryptoTool {
 		}
 	};
 
-	validateOTP = ({ token, secret }) => {
-		try {
-			return authenticator.verify({ token: JSON.stringify(token), secret })
-		} catch (error) {
-			console.log(error)
-			return false
-		}
+	validate = ({ token, secret }) => {
+		return this.authenticator.verify({ token, secret });
+	}
+
+	create = ({ secret }) => {
+		return this.authenticator.generate(secret);
 	}
 }
