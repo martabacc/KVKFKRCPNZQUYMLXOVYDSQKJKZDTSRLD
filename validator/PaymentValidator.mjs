@@ -14,7 +14,7 @@ export default class PaymentValidator {
 	}
 
 	static validateAuthorization = ({ pin }) => {
-		if (pin !== AppConstant.DEFAULT_PIN) {
+		if (String(pin) !== AppConstant.DEFAULT_PIN) {
 			return ErrorConstant.WRONG_PIN_OFFLINE_PAYMENT
 		}
 	}
