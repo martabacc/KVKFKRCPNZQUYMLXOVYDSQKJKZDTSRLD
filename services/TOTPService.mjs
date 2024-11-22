@@ -23,7 +23,7 @@ export default class TOTPService {
 
 		const isValid = this.authenticatorTool.validate({ token: otp, secret });
 		if (!isValid) {
-			return ErrorConstant.OFFLINE_PAYMENT_INIT_INVALID_QR
+			return ErrorConstant.OFFLINE_PAYMENT_INIT_INVALID_TOTP
 		}
 
 		/* valid, set otp to used to avoid recycling */

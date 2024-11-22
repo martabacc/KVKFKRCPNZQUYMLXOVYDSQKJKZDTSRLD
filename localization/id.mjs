@@ -11,8 +11,16 @@ export default {
 		title: "Device ini belum terdaftar",
 		subtitle: "Untuk keamanan, perlu mendaftarkan device terlebih dahulu"
 	},
+	OFFLINE_PAYMENT_ERROR_ENCRYPT: {
+		title: "Terjadi kesalahan",
+		subtitle: "OFFLINE_PAYMENT_ERROR_ENCRYPT"
+	},
 	OFFLINE_PAYMENT_INIT_INVALID_QR: {
 		title: "QR Code tidak valid",
+		subtitle: "Periksa kembali QR Code yang discan"
+	},
+	OFFLINE_PAYMENT_INIT_INVALID_TOTP: {
+		title: "QR Code tidak valid (TOTP)",
 		subtitle: "Periksa kembali QR Code yang discan"
 	},
 	INVALID_PAYMENT_INSUFFICIENT_BALANCE: {

@@ -25,7 +25,7 @@ export default class CryptoTool {
 			// Combine IV, auth tag, and encrypted data into a single string
 			return Buffer.concat([iv, authTag, encrypted]).toString('base64');
 		} catch (_) {
-			return { error: ErrorConstant.OFFLINE_PAYMENT_INIT_INVALID_QR };
+			return { error: ErrorConstant.OFFLINE_PAYMENT_ERROR_ENCRYPT };
 		}
 	};
 
@@ -45,7 +45,7 @@ export default class CryptoTool {
 			return JSON.parse(decrypted.toString('utf8'))
 		} catch (error) {
 			console.error('Decryption error:', error.message);
-			throw error;
+			return { error: ErrorConstant.OFFLINE_PAYMENT_INIT_INVALID_QR };
 		}
 	};
 }
